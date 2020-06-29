@@ -5,5 +5,4 @@ admin: "RED"
 projecthabitat: "AQUA"
 birdcorp: "BLUE"
 
-playerdata:
-  uuid: nickname
+playerdata: []

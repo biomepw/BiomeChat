@@ -5,6 +5,7 @@ import lombok.Getter;
 import net.md_5.bungee.api.ChatColor;
 import net.milkbowl.vault.permission.Permission;
 import org.bukkit.Bukkit;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -35,6 +36,7 @@ public class BiomeChat extends JavaPlugin {
         setupPermissions();
         getCommand("ichat").setExecutor(new CommandHandler());
         restartScoreboardTask();
+        buildCache();
     }
 
     /**
@@ -55,22 +57,39 @@ public class BiomeChat extends JavaPlugin {
             if (!rank.startsWith("playerdata")) new Rank(rank, ChatColor.of(getConfig().getString(rank)));
         }
 
-        getConfig().getConfigurationSection("playerdata").getKeys(false).forEach(key -> {
-            UUID uuid = UUID.fromString(key);
-            String nick = getConfig().getString("playerdata." + key);
-            PlayerCache.getNickCache().put(uuid, nick);
-        });
+        ConfigurationSection configurationSection = getConfig().getConfigurationSection("playerdata");
+
+        if (configurationSection != null) {
+            configurationSection.getKeys(false).forEach(key -> {
+                UUID uuid = UUID.fromString(key);
+                String nick = getConfig().getString("playerdata." + key);
+                PlayerCache.getNickCache().put(uuid, nick);
+            });
+        }
     }
 
     /**
-     * Static helper for colourising chat colour
+     * Helper method to colourise a string with a combination of both hex and legacy chat colours
      *
-     * @param input | String to process colour for
-     * @return colourised String
+     * @param input string to colourise
+     * @return colourised string
      */
-    public String colourise(String input) {
+    public static String colourise(String input) {
+        while (input.contains("#")) {
+            int index = input.indexOf("#");
+
+            String hexSubstring = input.substring(index - 1, index + 7).replaceAll("&", "");
+
+            ChatColor transformed = ChatColor.of(hexSubstring);
+
+            // Apply transformation to original string
+            input = input.replaceAll("&" + hexSubstring, transformed + "");
+        }
+
+        // Apply legacy transformations at end
         return ChatColor.translateAlternateColorCodes('&', input);
     }
+
 
     /**
      * Reload all plugin data
@@ -79,6 +98,10 @@ public class BiomeChat extends JavaPlugin {
         Rank.clearData();
         reloadConfig();
         loadRanks();
+        buildCache();
+    }
+
+    private void buildCache() {
         getServer().getOnlinePlayers().forEach(player -> PlayerCache.getOrCreateFromUUID(player.getUniqueId()));
     }
 

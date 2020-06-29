@@ -8,8 +8,8 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
-import pw.biome.biomechat.command.CommandHandler;
 import pw.biome.biomechat.BiomeChat;
+import pw.biome.biomechat.command.CommandHandler;
 import pw.biome.biomechat.obj.PlayerCache;
 
 public class ChatListener implements Listener {
@@ -32,7 +32,7 @@ public class ChatListener implements Listener {
 
         // Colourise their message if they have permission!
         if (player.hasPermission("ichat.colour")) {
-            message = BiomeChat.getPlugin().colourise(message);
+            message = BiomeChat.colourise(message);
         }
 
         // Party only chat

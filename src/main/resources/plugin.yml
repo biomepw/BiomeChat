@@ -1,5 +1,5 @@
-name: iChat
-main: pro.husk.ichat.iChat
+name: BiomeChat
+main: pw.biome.biomechat.BiomeChat
 version: ${project.version}
 author: husK
 softdepend: [Vault]
