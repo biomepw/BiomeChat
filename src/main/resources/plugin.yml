@@ -1,0 +1,10 @@
+name: iChat
+main: pro.husk.ichat.iChat
+version: ${project.version}
+author: husK
+softdepend: [Vault]
+api-version: 1.16
+commands:
+  ichat:
+    description: ""
+    usage: /ichat
