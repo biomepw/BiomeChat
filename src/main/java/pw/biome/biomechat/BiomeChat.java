@@ -77,13 +77,14 @@ public class BiomeChat extends JavaPlugin {
     public static String colourise(String input) {
         while (input.contains("#")) {
             int index = input.indexOf("#");
+            if (input.charAt(index - 1) == '&') {
+                String hexSubstring = input.substring(index - 1, index + 7).replaceAll("&", "");
 
-            String hexSubstring = input.substring(index - 1, index + 7).replaceAll("&", "");
+                ChatColor transformed = ChatColor.of(hexSubstring);
 
-            ChatColor transformed = ChatColor.of(hexSubstring);
-
-            // Apply transformation to original string
-            input = input.replaceAll("&" + hexSubstring, transformed + "");
+                // Apply transformation to original string
+                input = input.replaceAll("&" + hexSubstring, transformed + "");
+            }
         }
 
         // Apply legacy transformations at end
