@@ -13,7 +13,10 @@ import pw.biome.biomechat.command.CommandHandler;
 import pw.biome.biomechat.event.ChatListener;
 import pw.biome.biomechat.obj.PlayerCache;
 import pw.biome.biomechat.obj.Rank;
+import pw.biome.biomechat.obj.ScoreboardHook;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 public class BiomeChat extends JavaPlugin {
@@ -26,6 +29,9 @@ public class BiomeChat extends JavaPlugin {
 
     @Getter
     private static int scoreboardTaskId;
+
+    @Getter
+    private final List<ScoreboardHook> scoreboardHookList = new ArrayList<>();
 
     public void onEnable() {
         plugin = this;
@@ -131,14 +137,22 @@ public class BiomeChat extends JavaPlugin {
 
     public void stopScoreboardTask() {
         if (scoreboardTaskId != 0) {
-            Bukkit.getScheduler().cancelTask(BiomeChat.getScoreboardTaskId());
+            Bukkit.getScheduler().cancelTask(scoreboardTaskId);
             scoreboardTaskId = 0;
         }
     }
 
     public void restartScoreboardTask() {
-        if (scoreboardTaskId == 0) {
+        if (scoreboardTaskId == 0 && scoreboardHookList.size() == 0) {
             scoreboardTaskId = getServer().getScheduler().runTaskTimerAsynchronously(this, this::updateScoreboards, (10 * 20), (10 * 20)).getTaskId();
         }
+    }
+
+    public void registerHook(ScoreboardHook hook) {
+        scoreboardHookList.add(hook);
+    }
+
+    public void unregisterHook(ScoreboardHook hook) {
+        scoreboardHookList.remove(hook);
     }
 }
