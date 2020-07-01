@@ -110,25 +110,23 @@ public class BiomeChat extends JavaPlugin {
      * Update scoreboards with rank
      */
     public void updateScoreboards() {
-        Bukkit.getScheduler().runTaskAsynchronously(this, () -> {
-            ImmutableList<Player> playerList = ImmutableList.copyOf(getServer().getOnlinePlayers());
-            for (Player player : playerList) {
-                PlayerCache playerCache = PlayerCache.getFromUUID(player.getUniqueId());
+        ImmutableList<Player> playerList = ImmutableList.copyOf(getServer().getOnlinePlayers());
+        for (Player player : playerList) {
+            PlayerCache playerCache = PlayerCache.getFromUUID(player.getUniqueId());
 
-                if (playerCache == null) return;
+            if (playerCache == null) return;
 
-                player.setPlayerListHeader(ChatColor.BLUE + "Biome");
+            player.setPlayerListHeader(ChatColor.BLUE + "Biome");
 
-                boolean afk = playerCache.isAFK();
-                ChatColor prefix = playerCache.getRank().getPrefix();
+            boolean afk = playerCache.isAFK();
+            ChatColor prefix = playerCache.getRank().getPrefix();
 
-                if (afk) {
-                    player.setPlayerListName(ChatColor.GRAY + player.getDisplayName());
-                } else {
-                    player.setPlayerListName(prefix + player.getDisplayName());
-                }
+            if (afk) {
+                player.setPlayerListName(ChatColor.GRAY + player.getDisplayName());
+            } else {
+                player.setPlayerListName(prefix + player.getDisplayName());
             }
-        });
+        }
     }
 
     public void stopScoreboardTask() {
@@ -140,7 +138,7 @@ public class BiomeChat extends JavaPlugin {
 
     public void restartScoreboardTask() {
         if (scoreboardTaskId == 0) {
-            scoreboardTaskId = getServer().getScheduler().scheduleSyncRepeatingTask(this, this::updateScoreboards, (10 * 20), (10 * 20));
+            scoreboardTaskId = getServer().getScheduler().runTaskTimerAsynchronously(this, this::updateScoreboards, (10 * 20), (10 * 20)).getTaskId();
         }
     }
 }
