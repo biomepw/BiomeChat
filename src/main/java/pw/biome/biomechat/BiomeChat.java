@@ -83,7 +83,7 @@ public class BiomeChat extends JavaPlugin {
     public static String colourise(String input) {
         while (input.contains("#")) {
             int index = input.indexOf("#");
-            if (input.charAt(index - 1) == '&') {
+            if (index != 0 && input.charAt(index - 1) == '&') {
                 String hexSubstring = input.substring(index - 1, index + 7).replaceAll("&", "");
 
                 ChatColor transformed = ChatColor.of(hexSubstring);
