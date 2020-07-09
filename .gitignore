@@ -64,3 +64,9 @@ pip-log.txt
 
 # Deploy script
 *.sh
+
+# gradle
+/build/
+/.gradle/
+pom.xml
+gradle.properties
