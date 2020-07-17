@@ -8,9 +8,7 @@ import org.bukkit.scoreboard.Team;
 import pw.biome.biomechat.BiomeChat;
 
 import java.util.HashMap;
-import java.util.Optional;
 import java.util.UUID;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class PlayerCache {
