@@ -35,6 +35,12 @@ tasks {
         archiveFileName.set("BiomeChat-" + project.version + ".jar")
     }
 
+    processResources {
+        filesMatching("plugin.yml") {
+            expand(project.properties)
+        }
+    }
+
     build {
         dependsOn(shadowJar)
     }

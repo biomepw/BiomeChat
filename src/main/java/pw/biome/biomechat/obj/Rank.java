@@ -35,7 +35,7 @@ public class Rank {
 
     public static Rank getRankFromName(String rankName) {
         for (Rank rank : rankList) {
-            if (rank.getName().equals(rankName)) return rank;
+            if (rank.getName().equalsIgnoreCase(rankName)) return rank;
         }
         return null;
     }

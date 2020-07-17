@@ -86,10 +86,13 @@ public class BiomeChat extends JavaPlugin {
             if (index != 0 && input.charAt(index - 1) == '&') {
                 String hexSubstring = input.substring(index - 1, index + 7).replaceAll("&", "");
 
-                ChatColor transformed = ChatColor.of(hexSubstring);
+                try {
+                    ChatColor transformed = ChatColor.of(hexSubstring);
+                    // Apply transformation to original string
+                    input = input.replaceAll("&" + hexSubstring, transformed + "");
+                } catch (IllegalArgumentException ignored) {
 
-                // Apply transformation to original string
-                input = input.replaceAll("&" + hexSubstring, transformed + "");
+                }
             }
         }
 
