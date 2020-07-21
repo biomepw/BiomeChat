@@ -93,6 +93,8 @@ public class BiomeChat extends JavaPlugin {
                 } catch (IllegalArgumentException ignored) {
 
                 }
+            } else {
+                break;
             }
         }
 
