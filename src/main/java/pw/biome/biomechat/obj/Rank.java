@@ -8,6 +8,7 @@ import java.util.List;
 
 public class Rank {
 
+    @Getter
     private static final List<Rank> rankList = new ArrayList<>();
 
     @Getter
