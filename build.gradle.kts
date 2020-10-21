@@ -4,7 +4,7 @@ plugins {
     id("com.github.johnrengelman.shadow") version "6.0.0"
 }
 
-version = "3.1.0"
+version = "3.1.1"
 
 java {
     sourceCompatibility = JavaVersion.VERSION_1_8
@@ -24,10 +24,12 @@ repositories {
 }
 
 dependencies {
-    compileOnly("com.destroystokyo.paper:paper-api:1.16.1-R0.1-SNAPSHOT")
+    compileOnly("com.destroystokyo.paper:paper-api:1.16.3-R0.1-SNAPSHOT")
     compileOnly("com.github.MilkBowl:VaultAPI:1.7")
-    compileOnly("org.projectlombok:lombok:1.18.12")
-    annotationProcessor("org.projectlombok:lombok:1.18.12")
+    compileOnly("org.projectlombok:lombok:1.18.16")
+    annotationProcessor("org.projectlombok:lombok:1.18.16")
+    testImplementation("com.github.seeseemelk:MockBukkit-v1.16:0.5.0")
+    testImplementation("junit:junit:4.13")
 }
 
 tasks {
@@ -43,6 +45,10 @@ tasks {
 
     build {
         dependsOn(shadowJar)
+    }
+
+    test {
+        useJUnit()
     }
 }
 

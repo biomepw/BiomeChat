@@ -7,14 +7,17 @@ import net.milkbowl.vault.permission.Permission;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.plugin.java.JavaPluginLoader;
 import pw.biome.biomechat.command.CommandHandler;
 import pw.biome.biomechat.event.ChatListener;
 import pw.biome.biomechat.obj.PlayerCache;
 import pw.biome.biomechat.obj.Rank;
 import pw.biome.biomechat.obj.ScoreboardHook;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -32,6 +35,10 @@ public class BiomeChat extends JavaPlugin {
 
     @Getter
     private final List<ScoreboardHook> scoreboardHookList = new ArrayList<>();
+
+    protected BiomeChat(JavaPluginLoader loader, PluginDescriptionFile description, File dataFolder, File file) {
+        super(loader, description, dataFolder, file);
+    }
 
     public void onEnable() {
         plugin = this;
