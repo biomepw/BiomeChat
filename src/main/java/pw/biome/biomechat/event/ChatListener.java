@@ -7,10 +7,11 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
-import org.bukkit.event.player.PlayerJoinEvent;
 import pw.biome.biomechat.BiomeChat;
-import pw.biome.biomechat.command.CommandHandler;
-import pw.biome.biomechat.obj.PlayerCache;
+import pw.biome.biomechat.command.iChatCommand;
+import pw.biome.biomechat.obj.Corp;
+
+import java.util.UUID;
 
 public class ChatListener implements Listener {
 
@@ -24,10 +25,10 @@ public class ChatListener implements Listener {
         Player player = event.getPlayer();
         String message = event.getMessage();
 
-        ChatColor rankColour = PlayerCache.getFromUUID(player.getUniqueId()).getRank().getPrefix();
+        Corp corp = Corp.getCorpForUser(player.getUniqueId());
 
         // Process format
-        String newFormat = rankColour + "%1$s" + ChatColor.WHITE + ": %2$s";
+        String newFormat = corp.getPrefix() + "%1$s" + ChatColor.WHITE + ": %2$s";
         event.setFormat(newFormat);
 
         // Colourise their message if they have permission!
@@ -36,7 +37,7 @@ public class ChatListener implements Listener {
         }
 
         // Party only chat
-        if (CommandHandler.getPartyChatUsers().contains(player.getUniqueId())) {
+        if (iChatCommand.getPartyChatUsers().contains(player.getUniqueId())) {
             handlePartyChat(player, message);
             event.setCancelled(true);
         }
@@ -51,25 +52,16 @@ public class ChatListener implements Listener {
      * @param message to be sent
      */
     private void handlePartyChat(Player player, String message) {
-        PlayerCache playerCache = PlayerCache.getFromUUID(player.getUniqueId());
-
+        Corp corp = Corp.getCorpForUser(player.getUniqueId());
         Bukkit.getScheduler().runTask(BiomeChat.getPlugin(), () -> {
-            for (PlayerCache member : playerCache.getRank().getMembers()) {
-                Player target = Bukkit.getPlayer(member.getUuid());
+            for (UUID member : corp.getMembers()) {
+                Player target = Bukkit.getPlayer(member);
 
                 if (target != null) {
-                    target.sendMessage(ChatColor.GOLD + "*" + playerCache.getRank().getPrefix() + player.getDisplayName() + ": " + message);
+                    target.sendMessage(ChatColor.GOLD + "*" + corp.getPrefix() + player.getDisplayName() + ": " + message);
                 }
             }
-            System.out.println(ChatColor.GOLD + "*" + playerCache.getRank().getPrefix() + player.getName() + ": " + message);
+            System.out.println(ChatColor.GOLD + "*" + corp.getPrefix() + player.getName() + ": " + message);
         });
-    }
-
-    @EventHandler
-    public void onJoin(PlayerJoinEvent event) {
-        Player player = event.getPlayer();
-        PlayerCache playerCache = PlayerCache.getOrCreateFromUUID(event.getPlayer().getUniqueId());
-        playerCache.updateDisplayName(player);
-        player.setDisplayName(playerCache.getDisplayName());
     }
 }

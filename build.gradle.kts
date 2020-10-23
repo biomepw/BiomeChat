@@ -4,7 +4,7 @@ plugins {
     id("com.github.johnrengelman.shadow") version "6.0.0"
 }
 
-version = "3.1.1"
+version = "3.2.0"
 
 java {
     sourceCompatibility = JavaVersion.VERSION_1_8
@@ -21,20 +21,24 @@ repositories {
         name = "Jitpack"
         url = uri("https://jitpack.io/")
     }
+    maven {
+        name = "Aikar"
+        url = uri("https://repo.aikar.co/content/groups/aikar/")
+    }
 }
 
 dependencies {
     compileOnly("com.destroystokyo.paper:paper-api:1.16.3-R0.1-SNAPSHOT")
-    compileOnly("com.github.MilkBowl:VaultAPI:1.7")
+    implementation("co.aikar:acf-paper:0.5.0-SNAPSHOT")
     compileOnly("org.projectlombok:lombok:1.18.16")
     annotationProcessor("org.projectlombok:lombok:1.18.16")
-    testImplementation("com.github.seeseemelk:MockBukkit-v1.16:0.5.0")
-    testImplementation("junit:junit:4.13")
 }
 
 tasks {
     withType<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar> {
         archiveFileName.set("BiomeChat-" + project.version + ".jar")
+        relocate("co.aikar.commands", "pw.biome.biomechat.acf")
+        relocate("co.aikar.locales", "pw.biome.biomechat.locales")
     }
 
     processResources {

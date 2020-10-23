@@ -1,23 +1,18 @@
 package pw.biome.biomechat;
 
-import com.google.common.collect.ImmutableList;
+import co.aikar.commands.PaperCommandManager;
 import lombok.Getter;
 import net.md_5.bungee.api.ChatColor;
-import net.milkbowl.vault.permission.Permission;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.PluginDescriptionFile;
-import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.plugin.java.JavaPluginLoader;
-import pw.biome.biomechat.command.CommandHandler;
+import org.bukkit.scoreboard.Team;
+import pw.biome.biomechat.command.CorpCommand;
 import pw.biome.biomechat.event.ChatListener;
-import pw.biome.biomechat.obj.PlayerCache;
-import pw.biome.biomechat.obj.Rank;
+import pw.biome.biomechat.obj.Corp;
 import pw.biome.biomechat.obj.ScoreboardHook;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -28,17 +23,10 @@ public class BiomeChat extends JavaPlugin {
     private static BiomeChat plugin;
 
     @Getter
-    private Permission permission = null;
-
-    @Getter
     private static int scoreboardTaskId;
 
     @Getter
     private final List<ScoreboardHook> scoreboardHookList = new ArrayList<>();
-
-    protected BiomeChat(JavaPluginLoader loader, PluginDescriptionFile description, File dataFolder, File file) {
-        super(loader, description, dataFolder, file);
-    }
 
     public void onEnable() {
         plugin = this;
@@ -46,37 +34,38 @@ public class BiomeChat extends JavaPlugin {
         saveDefaultConfig();
         loadRanks();
         getServer().getPluginManager().registerEvents(new ChatListener(), this);
-        setupPermissions();
-        getCommand("ichat").setExecutor(new CommandHandler());
-        restartScoreboardTask();
-        buildCache();
-    }
 
-    /**
-     * Vault setup
-     */
-    private void setupPermissions() {
-        RegisteredServiceProvider<Permission> permissionProvider = getServer().getServicesManager().getRegistration(Permission.class);
-        if (permissionProvider != null) {
-            permission = permissionProvider.getProvider();
-        }
+        PaperCommandManager manager = new PaperCommandManager(plugin);
+        manager.getCommandContexts().registerContext(Corp.class, Corp.getContextResolver());
+        manager.registerCommand(new CorpCommand());
+
+        restartScoreboardTask();
     }
 
     /**
      * Load ranks into memory
      */
     private void loadRanks() {
-        for (String rank : getConfig().getKeys(false)) {
-            if (!rank.startsWith("playerdata")) new Rank(rank, ChatColor.of(getConfig().getString(rank)));
-        }
+        ConfigurationSection corpConfigurationSection = getConfig().getConfigurationSection("corps");
+        if (corpConfigurationSection != null) {
+            corpConfigurationSection.getKeys(false).forEach(key -> {
+                String prefix = corpConfigurationSection.getString(key + ".prefix");
+                List<String> members = corpConfigurationSection.getStringList(key + ".members");
 
-        ConfigurationSection configurationSection = getConfig().getConfigurationSection("playerdata");
+                if (key != null && prefix != null) {
+                    Corp corp = new Corp(key, ChatColor.of(prefix));
 
-        if (configurationSection != null) {
-            configurationSection.getKeys(false).forEach(key -> {
-                UUID uuid = UUID.fromString(key);
-                String nick = getConfig().getString("playerdata." + key);
-                PlayerCache.getNickCache().put(uuid, nick);
+                    // Load default corp
+                    if (corp.getName().equals("default")) {
+                        Corp.DEFAULT_CORP = corp;
+                        return;
+                    }
+
+                    members.forEach(string -> {
+                        UUID uuid = UUID.fromString(string);
+                        corp.addMember(uuid);
+                    });
+                }
             });
         }
     }
@@ -114,30 +103,21 @@ public class BiomeChat extends JavaPlugin {
      * Reload all plugin data
      */
     public void reload() {
-        Rank.clearData();
+        Corp.clearData();
         reloadConfig();
         loadRanks();
-        buildCache();
-    }
-
-    private void buildCache() {
-        getServer().getOnlinePlayers().forEach(player -> PlayerCache.getOrCreateFromUUID(player.getUniqueId()));
     }
 
     /**
      * Update scoreboards with rank
      */
     public void updateScoreboards() {
-        ImmutableList<Player> playerList = ImmutableList.copyOf(getServer().getOnlinePlayers());
-        for (Player player : playerList) {
-            PlayerCache playerCache = PlayerCache.getFromUUID(player.getUniqueId());
-
-            if (playerCache == null) return;
-
+        for (Player player : getServer().getOnlinePlayers()) {
             player.setPlayerListHeader(ChatColor.BLUE + "Biome");
 
-            boolean afk = playerCache.isAFK();
-            ChatColor prefix = playerCache.getRank().getPrefix();
+            Corp corp = Corp.getCorpForUser(player.getUniqueId());
+            ChatColor prefix = corp.getPrefix();
+            boolean afk = isAFK(player);
 
             if (afk) {
                 player.setPlayerListName(ChatColor.GRAY + player.getDisplayName());
@@ -166,5 +146,20 @@ public class BiomeChat extends JavaPlugin {
 
     public void unregisterHook(ScoreboardHook hook) {
         scoreboardHookList.remove(hook);
+    }
+
+    /**
+     * Method to check if the player is AFK
+     *
+     * @return whether or not the player is AFK
+     */
+    public boolean isAFK(Player player) {
+        if (player != null) {
+            Team team = player.getScoreboard().getTeam("hc_afk");
+            if (team != null) {
+                return team.hasEntry(player.getName());
+            }
+        }
+        return false;
     }
 }

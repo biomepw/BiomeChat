@@ -1,8 +1,5 @@
-# iChat Default configuration
-# (rankname): (colourcode)
-owner: "RED"
-admin: "RED"
-projecthabitat: "AQUA"
-birdcorp: "BLUE"
+# BiomeChat configuration!
 
-playerdata: []
+corps:
+  default:
+    prefix: "GREEN"
