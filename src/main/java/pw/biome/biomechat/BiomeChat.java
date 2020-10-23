@@ -9,6 +9,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scoreboard.Team;
 import pw.biome.biomechat.command.CorpCommand;
+import pw.biome.biomechat.command.iChatCommand;
 import pw.biome.biomechat.event.ChatListener;
 import pw.biome.biomechat.obj.Corp;
 import pw.biome.biomechat.obj.ScoreboardHook;
@@ -38,6 +39,7 @@ public class BiomeChat extends JavaPlugin {
         PaperCommandManager manager = new PaperCommandManager(plugin);
         manager.getCommandContexts().registerContext(Corp.class, Corp.getContextResolver());
         manager.registerCommand(new CorpCommand());
+        manager.registerCommand(new iChatCommand());
 
         restartScoreboardTask();
     }

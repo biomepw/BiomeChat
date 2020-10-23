@@ -1,10 +1,12 @@
 package pw.biome.biomechat.command;
 
+import co.aikar.commands.BaseCommand;
+import co.aikar.commands.annotation.CommandAlias;
+import co.aikar.commands.annotation.CommandPermission;
+import co.aikar.commands.annotation.Description;
+import co.aikar.commands.annotation.Subcommand;
 import lombok.Getter;
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import pw.biome.biomechat.BiomeChat;
@@ -13,41 +15,30 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-public class iChatCommand implements CommandExecutor {
+@CommandAlias("ichat|biomechat")
+@Description("Chat-related commands")
+public class iChatCommand extends BaseCommand {
 
     @Getter
     private static final List<UUID> partyChatUsers = new ArrayList<>();
 
-    @Override
-    public boolean onCommand(CommandSender commandSender, Command command, String commandLabel, String[] args) {
-
-        BiomeChat plugin = BiomeChat.getPlugin();
-
-        if (args.length == 1) {
-            if (args[0].equalsIgnoreCase("party") || args[0].equalsIgnoreCase("p")) {
-                if (commandSender instanceof Player) {
-                    Player player = (Player) commandSender;
-
-                    if (partyChatUsers.contains(player.getUniqueId())) {
-                        partyChatUsers.remove(player.getUniqueId());
-
-                        player.sendMessage(ChatColor.GOLD + "Party chat is now " + ChatColor.RED + "off");
-                    } else {
-                        partyChatUsers.add(player.getUniqueId());
-
-                        player.sendMessage(ChatColor.GOLD + "Party chat is now " + ChatColor.GREEN + "on");
-                    }
-                }
-            } else if (args[0].equalsIgnoreCase("reload")) {
-                if (commandSender.hasPermission("ichat.reload")) {
-                    plugin.reload();
-                    commandSender.sendMessage(ChatColor.GREEN + "iChat reloaded!");
-                } else {
-                    commandSender.sendMessage(ChatColor.GREEN + "iChat v" + plugin.getDescription().getVersion());
-                }
-            }
+    @Subcommand("p|party")
+    @Description("Toggles party chat mode")
+    public void onParty(Player player) {
+        if (partyChatUsers.contains(player.getUniqueId())) {
+            partyChatUsers.remove(player.getUniqueId());
+            player.sendMessage(ChatColor.GOLD + "Party chat is now " + ChatColor.RED + "off");
+        } else {
+            partyChatUsers.add(player.getUniqueId());
+            player.sendMessage(ChatColor.GOLD + "Party chat is now " + ChatColor.GREEN + "on");
         }
+    }
 
-        return true;
+    @Subcommand("reload")
+    @CommandPermission("ichat.admin")
+    @Description("Reloads plugin")
+    public void onReload(CommandSender sender) {
+        BiomeChat.getPlugin().reload();
+        sender.sendMessage(ChatColor.GREEN + "Plugin reloaded!");
     }
 }
