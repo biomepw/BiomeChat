@@ -5,7 +5,6 @@ import co.aikar.commands.annotation.CommandAlias;
 import co.aikar.commands.annotation.CommandCompletion;
 import co.aikar.commands.annotation.CommandPermission;
 import co.aikar.commands.annotation.Description;
-import co.aikar.commands.annotation.Optional;
 import co.aikar.commands.annotation.Subcommand;
 import co.aikar.commands.bukkit.contexts.OnlinePlayer;
 import net.md_5.bungee.api.ChatColor;
@@ -20,7 +19,7 @@ public class CorpCommand extends BaseCommand {
     @Subcommand("create")
     @CommandPermission("corp.create")
     @Description("Create a corp")
-    public void onCorpCreate(CommandSender sender, @Optional String corpName, @Optional String prefix) {
+    public void onCorpCreate(CommandSender sender, String corpName, String prefix) {
         if (corpName == null || prefix == null) {
             sender.sendMessage(ChatColor.RED + "Usage: /corp create <name> <prefix>");
         } else {
