@@ -4,6 +4,7 @@ import co.aikar.commands.BaseCommand;
 import co.aikar.commands.annotation.CommandAlias;
 import co.aikar.commands.annotation.CommandCompletion;
 import co.aikar.commands.annotation.CommandPermission;
+import co.aikar.commands.annotation.Default;
 import co.aikar.commands.annotation.Description;
 import co.aikar.commands.annotation.Subcommand;
 import co.aikar.commands.bukkit.contexts.OnlinePlayer;
@@ -15,6 +16,14 @@ import pw.biome.biomechat.obj.Corp;
 @CommandAlias("corp|corporation")
 @Description("Corporation commands")
 public class CorpCommand extends BaseCommand {
+
+    @Default
+    @Subcommand("help")
+    @Description("Shows the help screen")
+    public void onHelp(CommandSender sender) {
+        sender.sendMessage(ChatColor.GREEN + "Hey there and welcome to Corps! For some more detail, please read up at");
+        sender.sendMessage(ChatColor.BLUE + "https://github.com/biomepw/biome.pw/wiki");
+    }
 
     @Subcommand("create")
     @CommandPermission("corp.create")

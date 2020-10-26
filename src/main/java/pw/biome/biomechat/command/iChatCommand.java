@@ -23,6 +23,7 @@ public class iChatCommand extends BaseCommand {
     private static final List<UUID> partyChatUsers = new ArrayList<>();
 
     @Subcommand("p|party")
+    @CommandAlias("p|party")
     @Description("Toggles party chat mode")
     public void onParty(Player player) {
         if (partyChatUsers.contains(player.getUniqueId())) {

@@ -3,7 +3,3 @@ main: pw.biome.biomechat.BiomeChat
 version: ${project.version}
 author: husK
 api-version: 1.16
-commands:
-  ichat:
-    description: ""
-    usage: /ichat
