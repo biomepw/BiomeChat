@@ -1,2 +1,6 @@
 [build]
 commands = ["gradle clean build"]
+
+[archive]
+files = ["build/libs/BiomeChat-"]
+append_buildnumber = true
