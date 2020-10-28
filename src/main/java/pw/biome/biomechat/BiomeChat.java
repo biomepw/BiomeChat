@@ -34,7 +34,7 @@ public class BiomeChat extends JavaPlugin {
 
         saveDefaultConfig();
         loadRanks();
-        getServer().getPluginManager().registerEvents(new ChatListener(), this);
+        getServer().getPluginManager().registerEvents(new ChatListener(), plugin);
 
         PaperCommandManager manager = new PaperCommandManager(plugin);
         manager.getCommandContexts().registerContext(Corp.class, Corp.getContextResolver());
@@ -42,6 +42,13 @@ public class BiomeChat extends JavaPlugin {
         manager.registerCommand(new iChatCommand());
 
         restartScoreboardTask();
+        getServer().getScheduler().runTaskLaterAsynchronously(plugin, () -> {
+            for (Corp corp : Corp.getCorpList()) {
+                if (corp.getMembers().isEmpty()) {
+                    corp.delete();
+                }
+            }
+        }, 20 * 10);
     }
 
     /**

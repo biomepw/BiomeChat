@@ -5,8 +5,10 @@ import co.aikar.commands.InvalidCommandArgument;
 import co.aikar.commands.contexts.ContextResolver;
 import lombok.Getter;
 import net.md_5.bungee.api.ChatColor;
+import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import pw.biome.biomechat.BiomeChat;
+import pw.biome.biomechat.event.custom.CorpDeleteEvent;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -103,6 +105,9 @@ public class Corp {
         FileConfiguration config = BiomeChat.getPlugin().getConfig();
         config.set("corps." + name, null);
         BiomeChat.getPlugin().saveConfig();
+
+        // Call deleted event
+        Bukkit.getPluginManager().callEvent(new CorpDeleteEvent(this));
     }
 
     public static void clearData() {
