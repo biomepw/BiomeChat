@@ -42,9 +42,14 @@ public class BiomeChat extends JavaPlugin {
         manager.registerCommand(new iChatCommand());
 
         restartScoreboardTask();
-        getServer().getScheduler().runTaskLaterAsynchronously(plugin, () -> {
+
+        // Run task to cleanup all empty corps
+        getServer().getScheduler().runTaskLater(plugin, () -> {
             for (Corp corp : Corp.getCorpList()) {
+                // Don't delete the default corp...
+                if (corp == Corp.DEFAULT_CORP) continue;
                 if (corp.getMembers().isEmpty()) {
+                    getLogger().info("Deleting corp " + corp.getName() + " as it is empty.");
                     corp.delete();
                 }
             }
