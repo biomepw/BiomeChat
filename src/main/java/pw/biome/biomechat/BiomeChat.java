@@ -1,6 +1,7 @@
 package pw.biome.biomechat;
 
 import co.aikar.commands.PaperCommandManager;
+import com.google.common.collect.ImmutableList;
 import lombok.Getter;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
@@ -38,6 +39,15 @@ public class BiomeChat extends JavaPlugin {
 
         PaperCommandManager manager = new PaperCommandManager(plugin);
         manager.getCommandContexts().registerContext(Corp.class, Corp.getContextResolver());
+        manager.getCommandCompletions().registerCompletion("corps", c -> {
+            List<String> corpNames = new ArrayList<>();
+
+            Corp.getCorpList().forEach(corp -> {
+                corpNames.add(corp.getName());
+            });
+
+            return corpNames;
+        });
         manager.registerCommand(new CorpCommand());
         manager.registerCommand(new iChatCommand());
 

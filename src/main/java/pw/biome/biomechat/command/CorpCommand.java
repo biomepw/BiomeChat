@@ -48,7 +48,7 @@ public class CorpCommand extends BaseCommand {
 
     @Subcommand("add")
     @CommandPermission("corp.add")
-    @CommandCompletion("* * * @players")
+    @CommandCompletion("* * @corps @players")
     @Description("Add a player to a corp")
     public void onCorpAdd(CommandSender sender, Corp corp, OnlinePlayer target) {
         if (corp == null) {
@@ -64,7 +64,7 @@ public class CorpCommand extends BaseCommand {
 
     @Subcommand("remove")
     @CommandPermission("corp.remove")
-    @CommandCompletion("* * * @players")
+    @CommandCompletion("* * @corps @players")
     @Description("Remove a player from a corp")
     public void onCorpRemove(CommandSender sender, Corp corp, OnlinePlayer target) {
         if (corp == null || target == null) {
@@ -77,6 +77,7 @@ public class CorpCommand extends BaseCommand {
 
     @Subcommand("delete")
     @CommandPermission("corp.delete")
+    @CommandCompletion("* * @corps")
     @Description("Delete a corp")
     public void onCorpDelete(CommandSender sender, Corp corp) {
         if (corp == null) {
@@ -92,6 +93,11 @@ public class CorpCommand extends BaseCommand {
     @Description("Lists all corp")
     public void onCorpList(CommandSender sender) {
         sender.sendMessage(ChatColor.GREEN + "All corps:");
-        Corp.getCorpList().forEach(corp -> sender.sendMessage(corp.getPrefix() + corp.getName()));
+        Corp.getCorpList().forEach(corp -> {
+            if (!corp.getName().equalsIgnoreCase("default") ||
+                    corp.getName().equalsIgnoreCase("admin")) {
+                sender.sendMessage(corp.getPrefix() + corp.getName());
+            }
+        });
     }
 }
