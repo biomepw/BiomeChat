@@ -42,4 +42,13 @@ public class iChatCommand extends BaseCommand {
         BiomeChat.getPlugin().reload();
         sender.sendMessage(ChatColor.GREEN + "Plugin reloaded!");
     }
+
+    @Subcommand("debug")
+    @CommandPermission("ichat.admin")
+    @Description("Debugs")
+    public void onDebug(CommandSender sender) {
+        BiomeChat.getPlugin().getScoreboardHookList().forEach(hook -> {
+            sender.sendMessage(ChatColor.RED + hook.getClass().getName());
+        });
+    }
 }
