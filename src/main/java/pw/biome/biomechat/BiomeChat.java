@@ -1,10 +1,10 @@
 package pw.biome.biomechat;
 
 import co.aikar.commands.PaperCommandManager;
-import com.google.common.collect.ImmutableList;
 import lombok.Getter;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -13,6 +13,7 @@ import pw.biome.biomechat.command.CorpCommand;
 import pw.biome.biomechat.command.iChatCommand;
 import pw.biome.biomechat.event.ChatListener;
 import pw.biome.biomechat.obj.Corp;
+import pw.biome.biomechat.obj.MetadataManager;
 import pw.biome.biomechat.obj.ScoreboardHook;
 
 import java.util.ArrayList;
@@ -35,22 +36,10 @@ public class BiomeChat extends JavaPlugin {
 
         saveDefaultConfig();
         loadRanks();
+        loadMetadata();
+
         getServer().getPluginManager().registerEvents(new ChatListener(), plugin);
-
-        PaperCommandManager manager = new PaperCommandManager(plugin);
-        manager.getCommandContexts().registerContext(Corp.class, Corp.getContextResolver());
-        manager.getCommandCompletions().registerCompletion("corps", c -> {
-            List<String> corpNames = new ArrayList<>();
-
-            Corp.getCorpList().forEach(corp -> {
-                corpNames.add(corp.getName());
-            });
-
-            return corpNames;
-        });
-        manager.registerCommand(new CorpCommand());
-        manager.registerCommand(new iChatCommand());
-
+        setupCommands();
         restartScoreboardTask();
 
         // Run task to cleanup all empty corps
@@ -64,6 +53,34 @@ public class BiomeChat extends JavaPlugin {
                 }
             }
         }, 20 * 10);
+    }
+
+    private void setupCommands() {
+        PaperCommandManager manager = new PaperCommandManager(plugin);
+        manager.getCommandContexts().registerContext(Corp.class, Corp.getContextResolver());
+        manager.getCommandCompletions().registerAsyncCompletion("corps", c -> {
+            List<String> corpNames = new ArrayList<>();
+
+            Corp.getCorpList().forEach(corp -> {
+                corpNames.add(corp.getName());
+            });
+
+            return corpNames;
+        });
+
+        manager.getCommandCompletions().registerAsyncCompletion("patrons", c -> {
+            List<String> patrons = new ArrayList<>();
+
+            MetadataManager.getPatrons().forEach(uuid -> {
+                OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(uuid);
+                patrons.add(offlinePlayer.getName());
+            });
+
+            return patrons;
+        });
+
+        manager.registerCommand(new CorpCommand());
+        manager.registerCommand(new iChatCommand());
     }
 
     /**
@@ -92,6 +109,33 @@ public class BiomeChat extends JavaPlugin {
                 }
             });
         }
+    }
+
+    private void loadMetadata() {
+        ConfigurationSection nicknameSection = getConfig().getConfigurationSection("nicknames");
+        if (nicknameSection != null) {
+            nicknameSection.getKeys(false).forEach(key -> {
+                String nickname = nicknameSection.getString(key);
+                MetadataManager.getNicknameMap().put(UUID.fromString(key), nickname);
+            });
+        }
+
+        List<String> patrons = getConfig().getStringList("patrons");
+        patrons.forEach(patron -> {
+            UUID uuid = UUID.fromString(patron);
+            MetadataManager.getPatrons().add(uuid);
+        });
+    }
+
+    public void saveMetadata() {
+        MetadataManager.getNicknameMap().forEach((uuid, nickname) -> {
+            getConfig().set("nicknames." + uuid, nickname);
+        });
+
+        List<String> patronList = new ArrayList<>();
+        MetadataManager.getPatrons().forEach(uuid -> patronList.add(uuid.toString()));
+        getConfig().set("patrons", patronList);
+        saveConfig();
     }
 
     /**
@@ -130,6 +174,7 @@ public class BiomeChat extends JavaPlugin {
         Corp.clearData();
         reloadConfig();
         loadRanks();
+        loadMetadata();
     }
 
     /**

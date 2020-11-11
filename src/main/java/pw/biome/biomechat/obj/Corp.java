@@ -4,7 +4,6 @@ import co.aikar.commands.BukkitCommandExecutionContext;
 import co.aikar.commands.InvalidCommandArgument;
 import co.aikar.commands.contexts.ContextResolver;
 import lombok.Getter;
-import lombok.Setter;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;

@@ -7,9 +7,11 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
 import pw.biome.biomechat.BiomeChat;
 import pw.biome.biomechat.command.iChatCommand;
 import pw.biome.biomechat.obj.Corp;
+import pw.biome.biomechat.obj.MetadataManager;
 
 import java.util.UUID;
 
@@ -24,11 +26,19 @@ public class ChatListener implements Listener {
     public void onChat(AsyncPlayerChatEvent event) {
         Player player = event.getPlayer();
         String message = event.getMessage();
+        UUID uuid = player.getUniqueId();
 
-        Corp corp = Corp.getCorpForUser(player.getUniqueId());
+        Corp corp = Corp.getCorpForUser(uuid);
+        boolean isPatron = MetadataManager.getPatrons().contains(uuid);
 
         // Process format
-        String newFormat = corp.getPrefix() + "%1$s" + ChatColor.WHITE + ": %2$s";
+        String newFormat;
+        if (isPatron) {
+            newFormat = corp.getPrefix() + "** %1$s" + ChatColor.WHITE + ": %2$s";
+        } else {
+            newFormat = corp.getPrefix() + "%1$s" + ChatColor.WHITE + ": %2$s";
+        }
+
         event.setFormat(newFormat);
 
         // Colourise their message if they have permission!
@@ -58,10 +68,20 @@ public class ChatListener implements Listener {
                 Player target = Bukkit.getPlayer(member);
 
                 if (target != null) {
-                    target.sendMessage(ChatColor.GOLD + "*" + corp.getPrefix() + player.getDisplayName() + ": " + message);
+                    target.sendMessage(ChatColor.GOLD + "~" + corp.getPrefix() + player.getDisplayName() + ": " + message);
                 }
             }
-            System.out.println(ChatColor.GOLD + "*" + corp.getPrefix() + player.getName() + ": " + message);
+            System.out.println(ChatColor.GOLD + "~" + corp.getPrefix() + player.getName() + ": " + message);
         });
+    }
+
+    @EventHandler
+    private void playerJoin(PlayerJoinEvent event) {
+        Player player = event.getPlayer();
+        String nickname = MetadataManager.getNicknameMap().get(player.getUniqueId());
+
+        if (nickname != null) {
+            player.setDisplayName(nickname);
+        }
     }
 }
