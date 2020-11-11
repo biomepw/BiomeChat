@@ -4,6 +4,3 @@ commands = ["gradle clean build"]
 [archive]
 files = ["build/libs/BiomeChat-"]
 append_buildnumber = true
-
-[postarchive]
-commands = ["curl -X POST -H \"Content-Type: application/json\" -d '{\"username\": \"BiomeChat\", \"content\": \":heavy_check_mark:\"}' $CURL_URL"]
