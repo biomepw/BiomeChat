@@ -70,8 +70,7 @@ public class iChatCommand extends BaseCommand {
     @CommandPermission("ichat.admin")
     @CommandCompletion("* * @players *")
     @Description("Sets nickname for user")
-    public void onNickname(CommandSender sender, @Optional Player player, @Optional String nickname) {
-        if (player == null && sender instanceof Player) player = (Player) sender;
+    public void onNickname(CommandSender sender, Player player, @Optional String nickname) {
         if (nickname == null) {
             MetadataManager.getNicknameMap().remove(player.getUniqueId());
             sender.sendMessage(ChatColor.GREEN + "Removed nickname for " + player);

@@ -34,7 +34,7 @@ public class ChatListener implements Listener {
         // Process format
         String newFormat;
         if (isPatron) {
-            newFormat = corp.getPrefix() + "** %1$s" + ChatColor.WHITE + ": %2$s";
+            newFormat = corp.getPrefix() + "**%1$s" + ChatColor.WHITE + ": %2$s";
         } else {
             newFormat = corp.getPrefix() + "%1$s" + ChatColor.WHITE + ": %2$s";
         }
