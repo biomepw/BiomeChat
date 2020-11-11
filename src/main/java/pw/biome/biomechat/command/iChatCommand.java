@@ -68,16 +68,18 @@ public class iChatCommand extends BaseCommand {
 
     @Subcommand("nick")
     @CommandPermission("ichat.admin")
-    @CommandCompletion("* * @players")
+    @CommandCompletion("* * @players *")
     @Description("Sets nickname for user")
     public void onNickname(CommandSender sender, @Optional Player player, @Optional String nickname) {
         if (player == null && sender instanceof Player) player = (Player) sender;
         if (nickname == null) {
             MetadataManager.getNicknameMap().remove(player.getUniqueId());
             sender.sendMessage(ChatColor.GREEN + "Removed nickname for " + player);
+            player.setDisplayName(player.getName());
         } else {
             MetadataManager.getNicknameMap().put(player.getUniqueId(), nickname);
             sender.sendMessage(ChatColor.GREEN + player.getName() + " now has a display name of " + nickname);
+            player.setDisplayName(nickname);
         }
         BiomeChat.getPlugin().saveMetadata();
     }
