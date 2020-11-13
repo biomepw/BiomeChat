@@ -48,7 +48,7 @@ public class iChatCommand extends BaseCommand {
 
     @Subcommand("patron add")
     @CommandPermission("ichat.admin")
-    @CommandCompletion("* * * @players")
+    @CommandCompletion("@players")
     @Description("Adds a user as a patron")
     public void onPatronAdd(CommandSender sender, OfflinePlayer player) {
         MetadataManager.getPatrons().add(player.getUniqueId());
@@ -58,7 +58,7 @@ public class iChatCommand extends BaseCommand {
 
     @Subcommand("patron remove")
     @CommandPermission("ichat.admin")
-    @CommandCompletion("* * * @patrons")
+    @CommandCompletion("@patrons")
     @Description("Removes a user as a patron")
     public void onPatronRemove(CommandSender sender, OfflinePlayer player) {
         MetadataManager.getPatrons().remove(player.getUniqueId());
