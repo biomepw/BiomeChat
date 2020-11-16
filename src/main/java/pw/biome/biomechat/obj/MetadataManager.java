@@ -9,8 +9,8 @@ import java.util.UUID;
 public final class MetadataManager {
 
     @Getter
-    private static HashMap<UUID, String> nicknameMap = new HashMap<>();
+    private static final HashMap<UUID, String> nicknameMap = new HashMap<>();
 
     @Getter
-    private static HashSet<UUID> patrons = new HashSet<>();
+    private static final HashSet<UUID> patrons = new HashSet<>();
 }

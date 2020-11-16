@@ -8,6 +8,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import pw.biome.biomechat.BiomeChat;
 import pw.biome.biomechat.command.iChatCommand;
 import pw.biome.biomechat.obj.Corp;
@@ -34,9 +35,9 @@ public class ChatListener implements Listener {
         // Process format
         String newFormat;
         if (isPatron) {
-            newFormat = corp.getPrefix() + "**%1$s" + ChatColor.WHITE + ": %2$s";
+            newFormat = corp.getPrefix() + "**%s" + ChatColor.WHITE + ": %s";
         } else {
-            newFormat = corp.getPrefix() + "%1$s" + ChatColor.WHITE + ": %2$s";
+            newFormat = corp.getPrefix() + "%s" + ChatColor.WHITE + ": %s";
         }
 
         event.setFormat(newFormat);
@@ -82,6 +83,17 @@ public class ChatListener implements Listener {
 
         if (nickname != null) {
             player.setDisplayName(nickname);
+            event.setJoinMessage(event.getJoinMessage().replaceAll(player.getName(), nickname));
+        }
+    }
+
+    @EventHandler
+    public void playerLeave(PlayerQuitEvent event) {
+        Player player = event.getPlayer();
+        String nickname = MetadataManager.getNicknameMap().get(player.getUniqueId());
+
+        if (nickname != null) {
+            event.setQuitMessage(event.getQuitMessage().replaceAll(player.getName(), nickname));
         }
     }
 }

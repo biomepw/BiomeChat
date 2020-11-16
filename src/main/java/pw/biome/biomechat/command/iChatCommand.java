@@ -1,13 +1,9 @@
 package pw.biome.biomechat.command;
 
 import co.aikar.commands.BaseCommand;
-import co.aikar.commands.annotation.CommandAlias;
-import co.aikar.commands.annotation.CommandCompletion;
-import co.aikar.commands.annotation.CommandPermission;
-import co.aikar.commands.annotation.Description;
-import co.aikar.commands.annotation.Optional;
-import co.aikar.commands.annotation.Subcommand;
+import co.aikar.commands.annotation.*;
 import lombok.Getter;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
@@ -66,29 +62,39 @@ public class iChatCommand extends BaseCommand {
         BiomeChat.getPlugin().saveMetadata();
     }
 
-    @Subcommand("nick")
+    @Subcommand("nick add")
     @CommandPermission("ichat.admin")
-    @CommandCompletion("* * @players *")
+    @CommandCompletion("@players")
     @Description("Sets nickname for user")
-    public void onNickname(CommandSender sender, Player player, @Optional String nickname) {
-        if (nickname == null) {
-            MetadataManager.getNicknameMap().remove(player.getUniqueId());
-            sender.sendMessage(ChatColor.GREEN + "Removed nickname for " + player);
-            player.setDisplayName(player.getName());
-        } else {
+    public void onNickname(CommandSender sender, String target, String nickname) {
+        Player player = Bukkit.getPlayer(target);
+        if (player != null) {
             MetadataManager.getNicknameMap().put(player.getUniqueId(), nickname);
             sender.sendMessage(ChatColor.GREEN + player.getName() + " now has a display name of " + nickname);
             player.setDisplayName(nickname);
+            BiomeChat.getPlugin().saveMetadata();
         }
-        BiomeChat.getPlugin().saveMetadata();
+    }
+
+    @Subcommand("nick remove")
+    @CommandPermission("ichat.admin")
+    @CommandCompletion("@players")
+    @Description("Sets nickname for user")
+    public void onNickname(CommandSender sender, String target) {
+        Player player = Bukkit.getPlayer(target);
+        if (player != null) {
+            MetadataManager.getNicknameMap().remove(player.getUniqueId());
+            sender.sendMessage(ChatColor.GREEN + "Removed nickname for " + player.getName());
+            player.setDisplayName(player.getName());
+            BiomeChat.getPlugin().saveMetadata();
+        }
     }
 
     @Subcommand("debug")
     @CommandPermission("ichat.admin")
     @Description("Debugs")
     public void onDebug(CommandSender sender) {
-        BiomeChat.getPlugin().getScoreboardHookList().forEach(hook -> {
-            sender.sendMessage(ChatColor.RED + hook.getClass().getName());
-        });
+        BiomeChat.getPlugin().getScoreboardHookList().forEach(hook ->
+                sender.sendMessage(ChatColor.RED + hook.getClass().getName()));
     }
 }
