@@ -10,11 +10,7 @@ import org.bukkit.configuration.file.FileConfiguration;
 import pw.biome.biomechat.BiomeChat;
 import pw.biome.biomechat.event.custom.CorpDeleteEvent;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 public class Corp {
 

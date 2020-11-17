@@ -1,17 +1,11 @@
 package pw.biome.biomechat.command;
 
 import co.aikar.commands.BaseCommand;
-import co.aikar.commands.annotation.CommandAlias;
-import co.aikar.commands.annotation.CommandCompletion;
-import co.aikar.commands.annotation.CommandPermission;
-import co.aikar.commands.annotation.Default;
-import co.aikar.commands.annotation.Description;
-import co.aikar.commands.annotation.Subcommand;
+import co.aikar.commands.annotation.*;
 import co.aikar.commands.bukkit.contexts.OnlinePlayer;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.command.CommandSender;
 import pw.biome.biomechat.obj.Corp;
-
 
 @CommandAlias("corp|corporation")
 @Description("Corporation commands")
@@ -94,8 +88,7 @@ public class CorpCommand extends BaseCommand {
     public void onCorpList(CommandSender sender) {
         sender.sendMessage(ChatColor.GREEN + "All corps:");
         Corp.getCorpList().forEach(corp -> {
-            if (!corp.getName().equalsIgnoreCase("default") ||
-                    corp.getName().equalsIgnoreCase("admin")) {
+            if (!corp.getName().equalsIgnoreCase("default") || !corp.getName().equalsIgnoreCase("admin")) {
                 sender.sendMessage(corp.getPrefix() + corp.getName());
             }
         });
