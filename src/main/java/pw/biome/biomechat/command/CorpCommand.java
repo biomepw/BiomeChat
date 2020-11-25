@@ -22,6 +22,8 @@ public class CorpCommand extends BaseCommand {
     @Subcommand("create")
     @CommandPermission("corp.create")
     @Description("Create a corp")
+    @Syntax("<corp name> <prefix>")
+    @CommandCompletion("@nothing @chatcolors")
     public void onCorpCreate(CommandSender sender, String corpName, String prefix) {
         if (corpName == null || prefix == null) {
             sender.sendMessage(ChatColor.RED + "Usage: /corp create <name> <prefix>");
@@ -43,6 +45,7 @@ public class CorpCommand extends BaseCommand {
     @Subcommand("add")
     @CommandPermission("corp.add")
     @CommandCompletion("@corps @players")
+    @Syntax("<corp name> <user>")
     @Description("Add a player to a corp")
     public void onCorpAdd(CommandSender sender, Corp corp, OnlinePlayer target) {
         if (corp == null) {
@@ -59,6 +62,7 @@ public class CorpCommand extends BaseCommand {
     @Subcommand("remove")
     @CommandPermission("corp.remove")
     @CommandCompletion("@corps @players")
+    @Syntax("<corp name> <prefix>")
     @Description("Remove a player from a corp")
     public void onCorpRemove(CommandSender sender, Corp corp, OnlinePlayer target) {
         if (corp == null || target == null) {
