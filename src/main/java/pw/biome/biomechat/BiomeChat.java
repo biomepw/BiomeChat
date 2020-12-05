@@ -224,7 +224,7 @@ public class BiomeChat extends JavaPlugin {
      */
     public boolean isAFK(Player player) {
         if (player != null) {
-            Team team = player.getScoreboard().getTeam("hc_afk");
+            Team team = player.getScoreboard().getTeam("afkDis.afk");
             if (team != null) {
                 return team.hasEntry(player.getName());
             }
