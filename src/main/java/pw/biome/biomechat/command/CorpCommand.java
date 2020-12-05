@@ -2,8 +2,8 @@ package pw.biome.biomechat.command;
 
 import co.aikar.commands.BaseCommand;
 import co.aikar.commands.annotation.*;
-import co.aikar.commands.bukkit.contexts.OnlinePlayer;
 import net.md_5.bungee.api.ChatColor;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import pw.biome.biomechat.obj.Corp;
 
@@ -47,16 +47,17 @@ public class CorpCommand extends BaseCommand {
     @CommandCompletion("@corps @players")
     @Syntax("<corp name> <user>")
     @Description("Add a player to a corp")
-    public void onCorpAdd(CommandSender sender, Corp corp, OnlinePlayer target) {
+    public void onCorpAdd(CommandSender sender, Corp corp, OfflinePlayer target) {
         if (corp == null) {
             sender.sendMessage(ChatColor.RED + "That corp doesn't exist!");
             return;
         } else if (target == null) {
-            sender.sendMessage(ChatColor.RED + "That player isn't online or cannot be found!");
+            sender.sendMessage(ChatColor.RED + "That player cannot be found!");
             return;
         }
-        corp.addMember(target.getPlayer().getUniqueId());
-        sender.sendMessage(ChatColor.GREEN + "Successfully added '" + target.getPlayer().getDisplayName() + "' to corp: '" + corp.getName() + "'");
+
+        corp.addMember(target.getUniqueId());
+        sender.sendMessage(ChatColor.GREEN + "Successfully added '" + target.getName() + "' to corp: '" + corp.getName() + "'");
     }
 
     @Subcommand("remove")
@@ -64,12 +65,12 @@ public class CorpCommand extends BaseCommand {
     @CommandCompletion("@corps @players")
     @Syntax("<corp name> <prefix>")
     @Description("Remove a player from a corp")
-    public void onCorpRemove(CommandSender sender, Corp corp, OnlinePlayer target) {
+    public void onCorpRemove(CommandSender sender, Corp corp, OfflinePlayer target) {
         if (corp == null || target == null) {
             sender.sendMessage(ChatColor.RED + "Usage: /corp remove <corp> <player>");
         } else {
-            corp.removeMember(target.getPlayer().getUniqueId());
-            sender.sendMessage(ChatColor.GREEN + "Successfully added '" + target.getPlayer().getDisplayName() + "' to corp: '" + corp.getName() + "'");
+            corp.removeMember(target.getUniqueId());
+            sender.sendMessage(ChatColor.GREEN + "Successfully added '" + target.getName() + "' to corp: '" + corp.getName() + "'");
         }
     }
 
