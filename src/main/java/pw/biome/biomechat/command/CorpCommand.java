@@ -92,10 +92,6 @@ public class CorpCommand extends BaseCommand {
     @Description("Lists all corp")
     public void onCorpList(CommandSender sender) {
         sender.sendMessage(ChatColor.GREEN + "All corps:");
-        Corp.getCorpList().forEach(corp -> {
-            if (!corp.getName().equalsIgnoreCase("default") || !corp.getName().equalsIgnoreCase("admin")) {
-                sender.sendMessage(corp.getPrefix() + corp.getName());
-            }
-        });
+        Corp.getCorpList().forEach(corp -> sender.sendMessage(corp.getPrefix() + corp.getName()));
     }
 }
