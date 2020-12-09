@@ -70,7 +70,7 @@ public class CorpCommand extends BaseCommand {
             sender.sendMessage(ChatColor.RED + "Usage: /corp remove <corp> <player>");
         } else {
             corp.removeMember(target.getUniqueId());
-            sender.sendMessage(ChatColor.GREEN + "Successfully added '" + target.getName() + "' to corp: '" + corp.getName() + "'");
+            sender.sendMessage(ChatColor.GREEN + "Successfully removed '" + target.getName() + "' to corp: '" + corp.getName() + "'");
         }
     }
 
