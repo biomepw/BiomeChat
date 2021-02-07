@@ -182,7 +182,7 @@ public class BiomeChat extends JavaPlugin {
      */
     public void updateScoreboards() {
         for (Player player : getServer().getOnlinePlayers()) {
-            player.setPlayerListHeader(ChatColor.BLUE + "Biome");
+            player.setPlayerListHeader(ChatColor.DARK_PURPLE + "Purple");
 
             Corp corp = Corp.getCorpForUser(player.getUniqueId());
             ChatColor prefix = corp.getPrefix();
