@@ -14,6 +14,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import pw.biome.biomechat.BiomeChat;
 import pw.biome.biomechat.obj.MetadataManager;
+import pw.biome.biomechat.obj.NicknameConfig;
 
 import java.util.HashSet;
 import java.util.UUID;
@@ -72,10 +73,10 @@ public class iChatCommand extends BaseCommand {
     @Description("Sets nickname for user")
     public void onNickname(CommandSender sender, OnlinePlayer target, String nickname) {
         Player player = target.getPlayer();
-        MetadataManager.getNicknameMap().put(player.getUniqueId(), nickname);
+        NicknameConfig.getConfig().addDefault("nicknames." + player.getUniqueId().toString(), nickname);
         sender.sendMessage(ChatColor.GREEN + player.getName() + " now has a display name of " + nickname);
         player.setDisplayName(nickname);
-        BiomeChat.getPlugin().saveMetadata();
+        NicknameConfig.saveConfig();
     }
 
     @Subcommand("nick remove")
@@ -84,10 +85,21 @@ public class iChatCommand extends BaseCommand {
     @Description("Sets nickname for user")
     public void onNickname(CommandSender sender, OnlinePlayer target) {
         Player player = target.getPlayer();
-        MetadataManager.getNicknameMap().remove(player.getUniqueId());
-        sender.sendMessage(ChatColor.GREEN + "Removed nickname for " + player.getName());
-        player.setDisplayName(player.getName());
-        BiomeChat.getPlugin().saveMetadata();
+        if(NicknameConfig.getConfig().contains("nickname." + player.getUniqueId().toString())){
+            NicknameConfig.getConfig().set("nickname." + player.getUniqueId().toString(), null);
+            sender.sendMessage(ChatColor.GREEN + "Removed nickname for " + player.getName());
+            NicknameConfig.saveConfig();
+            player.setDisplayName(player.getName());
+        }else{
+            sender.sendMessage(ChatColor.RED + "There were no players matching the target");
+        }
+    }
+    @Subcommand("nick reload")
+    @CommandPermission("ichat.admin")
+    @CommandCompletion("@players")
+    @Description("reloads the nickname config")
+    public void reload(){
+        NicknameConfig.reloadConfig();
     }
 
     @Subcommand("debug")

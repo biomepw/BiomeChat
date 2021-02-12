@@ -14,6 +14,7 @@ import pw.biome.biomechat.command.iChatCommand;
 import pw.biome.biomechat.event.ChatListener;
 import pw.biome.biomechat.obj.Corp;
 import pw.biome.biomechat.obj.MetadataManager;
+import pw.biome.biomechat.obj.NicknameConfig;
 import pw.biome.biomechat.obj.ScoreboardHook;
 
 import java.util.ArrayList;
@@ -53,6 +54,11 @@ public class BiomeChat extends JavaPlugin {
                 }
             }
         }, 20 * 10);
+
+        NicknameConfig.setupConfig();
+        NicknameConfig.getConfig().addDefault("nicknames", null);
+        NicknameConfig.getConfig().options().copyDefaults(true);
+        NicknameConfig.saveConfig();
     }
 
     private void setupCommands() {
@@ -112,13 +118,6 @@ public class BiomeChat extends JavaPlugin {
     }
 
     private void loadMetadata() {
-        ConfigurationSection nicknameSection = getConfig().getConfigurationSection("nicknames");
-        if (nicknameSection != null) {
-            nicknameSection.getKeys(false).forEach(key -> {
-                String nickname = nicknameSection.getString(key);
-                MetadataManager.getNicknameMap().put(UUID.fromString(key), nickname);
-            });
-        }
 
         List<String> patrons = getConfig().getStringList("patrons");
         patrons.forEach(patron -> {
@@ -128,9 +127,6 @@ public class BiomeChat extends JavaPlugin {
     }
 
     public void saveMetadata() {
-        MetadataManager.getNicknameMap().forEach((uuid, nickname) -> {
-            getConfig().set("nicknames." + uuid, nickname);
-        });
 
         List<String> patronList = new ArrayList<>();
         MetadataManager.getPatrons().forEach(uuid -> patronList.add(uuid.toString()));
@@ -182,7 +178,7 @@ public class BiomeChat extends JavaPlugin {
      */
     public void updateScoreboards() {
         for (Player player : getServer().getOnlinePlayers()) {
-            player.setPlayerListHeader(ChatColor.BLUE + "Biome");
+            player.setPlayerListHeader(ChatColor.DARK_PURPLE + "PurpleSMP");
 
             Corp corp = Corp.getCorpForUser(player.getUniqueId());
             ChatColor prefix = corp.getPrefix();
